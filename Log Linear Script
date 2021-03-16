@@ -1,0 +1,46 @@
+setwd("~/Documents/R Data")
+CatsDogs<-read.delim("CatsandDogs2.dat", header = TRUE) 
+library(MASS)
+CDtable = xtabs(~Animal+Training+Dance, data = CatsDogs)
+model0 = loglm(~ Animal + Training + Dance + Animal:Training + Training:Dance + Animal:Dance + Animal:Training:Dance , data = CDtable, fit = TRUE)
+
+model1 = loglm(~ Animal + Training + Dance + Animal:Training + Training:Dance + Animal:Dance, data = CDtable, fit = TRUE)
+
+model2 = loglm(~ Animal + Training + Dance + Animal:Training + Training:Dance , data = CDtable, fit = TRUE)
+
+model3 = loglm(~ Animal + Training + Dance + Animal:Training + Animal:Dance, data = CDtable, fit = TRUE)
+
+model4 = loglm(~ Animal + Training + Dance + Training:Dance + Animal:Dance, data = CDtable, fit = TRUE)
+
+model5 = loglm(~ Animal + Training + Animal:Training, data = CDtable, fit = TRUE)
+
+model6 = loglm(~ Training + Dance + Training:Dance , data = CDtable, fit = TRUE)
+
+model7 = loglm(~ Animal + Dance + Animal:Dance, data = CDtable, fit = TRUE)
+
+model8 = loglm(~ Animal + Training + Dance, data = CDtable, fit = TRUE)
+
+summary(model1)
+
+# The fact that the results from model1 are significant means that 
+# model0 is our best fitting model.
+
+#The CrossTable() function is not able to run an analysis on three 
+#variables simultaneously so we will need to first create subsets 
+#of the data before running our analyses.
+
+#Creates two subsets of the data; one for Cats and one for Dogs
+catsub = subset(CatsDogs, Animal == "Cat")
+dogsub = subset(CatsDogs, Animal == "Dog")
+
+#Need in order to use CrossTable command
+library(gmodels)
+
+#Runs a chi-square analysis on the cat subset of the data
+CrossTable(catsub$Training, catsub$Dance, chisq = TRUE, expected = TRUE, sresid = TRUE, format = "SPSS")
+
+#Runs a chi-square analysis on the dog subset of the data
+CrossTable(dogsub$Training, dogsub$Dance, chisq = TRUE, expected = TRUE, sresid = TRUE, format = "SPSS")
+
+
+mosaicplot(CDtable, shade = TRUE, main = "Animal, Training, and Dance")

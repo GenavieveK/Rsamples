@@ -1,0 +1,44 @@
+setwd("~/Documents/R Data")
+Lab12.data<-read.delim("lab 12 sra 365 wc.dat", header = TRUE) 
+library(MASS)
+Table = xtabs(~per_sensitive_v2+dys_detect_v2+cost_controls_v2, data = Lab12.data)
+
+model0 = loglm(~ per_sensitive_v2 + dys_detect_v2 + cost_controls_v2 + per_sensitive_v2:dys_detect_v2 + dys_detect_v2:cost_controls_v2 + per_sensitive_v2:cost_controls_v2 + per_sensitive_v2:dys_detect_v2:cost_controls_v2 , data = Table, fit = TRUE)
+
+model1 = loglm(~ per_sensitive_v2 + dys_detect_v2 + cost_controls_v2 + per_sensitive_v2:dys_detect_v2 + dys_detect_v2:cost_controls_v2 + per_sensitive_v2:cost_controls_v2, data = Table, fit = TRUE)
+
+model2 = loglm(~ per_sensitive_v2 + dys_detect_v2 + cost_controls_v2 + per_sensitive_v2:dys_detect_v2 + dys_detect_v2:cost_controls_v2 , data = Table, fit = TRUE)
+
+model3 = loglm(~ per_sensitive_v2 + dys_detect_v2 + cost_controls_v2 + per_sensitive_v2:dys_detect_v2 + per_sensitive_v2:cost_controls_v2, data = Table, fit = TRUE)
+
+model4 = loglm(~ per_sensitive_v2 + dys_detect_v2 + cost_controls_v2 + dys_detect_v2:cost_controls_v2 + per_sensitive_v2:cost_controls_v2, data = Table, fit = TRUE)
+
+model5 = loglm(~ per_sensitive_v2 + dys_detect_v2 + per_sensitive_v2:dys_detect_v2, data = Table, fit = TRUE)
+
+model6 = loglm(~ dys_detect_v2 + cost_controls_v2 + dys_detect_v2:cost_controls_v2 , data = Table, fit = TRUE)
+
+model7 = loglm(~ per_sensitive_v2 + cost_controls_v2 + per_sensitive_v2:cost_controls_v2, data = Table, fit = TRUE)
+
+model8 = loglm(~ per_sensitive_v2 + dys_detect_v2 + cost_controls_v2, data = Table, fit = TRUE)
+
+summary(model0)
+summary(model1)
+summary(model2)
+summary(model3)
+summary(model4)
+summary(model5)
+summary(model6)
+summary(model7)
+summary(model8)
+
+
+Fast.sub = subset(Lab12.data,  dys_detect_v2 == "Fast")
+Slow.sub = subset(Lab12.data,  dys_detect_v2 == "Slow")
+
+library(gmodels)
+
+CrossTable(Fast.sub$per_sensitive_v2, Fast.sub$cost_controls_v2, fisher = TRUE, chisq = TRUE, expected = TRUE, sresid = TRUE, format = "SPSS")
+
+CrossTable(Slow.sub$per_sensitive_v2, Slow.sub$cost_controls_v2, fisher = TRUE, chisq = TRUE, expected = TRUE, sresid = TRUE, format = "SPSS")
+
+mosaicplot(Table, shade = TRUE, main = "Data Breached, Number of Days, Security Controls")

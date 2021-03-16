@@ -1,0 +1,38 @@
+setwd("~/Documents/R Data")
+
+#reads the data in
+penalty.data<-read.csv("penalty.csv", header = TRUE)
+
+#loads the package for glm function
+library(car)
+
+#overrides the coding of Scored from 0 = missed penalty and 1 = scored penalty
+#to 1 = Missed Penalty and 0 = Scored Penalty: 
+#This will make scored penalty the baseline category and missed penalty the category of interest.
+penalty.data$Scored = relevel(penalty.data$Scored, "Scored Penalty")
+
+#runs the logistic regression model
+penalty.model1 = glm(Scored ~PSWQ, data = penalty.data, family = binomial)
+summary(penalty.model1)
+
+#Determine the odds when Penalty Shot Worry Questionnaire [PSWQ] = 1
+p.scored.1 = 1/(1+(exp(-(-4.90010+(0.29397*1)))))
+p.missed.1 = 1 - p.scored.1
+odds.1 = p.scored.1/p.missed.1
+
+#Determine the odds when Penalty Shot Worry Questionnaire [PSWQ] = 2
+p.scored.2 = 1/(1+(exp(-(-4.90010+(0.29397*2)))))
+p.missed.2 = 1 - p.scored.2
+odds.2 = p.scored.2/p.missed.2
+
+#Values for above are in the global environment under "values"
+#Determine the odds ratio:
+odds.ratio = odds.2/odds.1
+
+#super shortcut - use this command on the object storing the regression model
+exp(penalty.model1$coefficients)
+
+#SELF CHECK L09-1
+penalty.data$Scored = relevel(penalty.data$Scored, "Missed Penalty")
+penalty.model4 = glm(Scored ~ PSWQ, data = penalty.data, family = binomial)
+summary(penalty.model4)

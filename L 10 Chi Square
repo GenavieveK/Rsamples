@@ -1,0 +1,23 @@
+setwd("~/Documents/R Data")
+cats<-read.delim("cats.dat", header = TRUE) 
+
+#package containing CrossTable
+install.packages("gmodels")
+library(gmodels)
+
+#make the contingency table called catsTable
+food<- c(10, 28)
+affection<- c(114, 48)
+catsTable<- cbind(food, affection)
+
+#fisher = fisher's exact test, chisq = chi-square test,
+#expected = expected values, sresid + "SPSS"= standardized residuals
+
+#Chi-square test on RAW DATA
+CrossTable(cats$Training, cats$Dance, fisher = TRUE,
+           chisq = TRUE, expected = TRUE, 
+           sresid = TRUE, format = "SPSS")
+
+#Chi-square test on CONTINGENCY TABLE
+CrossTable(catsTable, fisher = TRUE, chisq = TRUE, 
+           expected = TRUE, sresid = TRUE, format = "SPSS")
